@@ -1,17 +1,17 @@
 import types from './types';
 
 export default {
-    loginRequest(login, subLogin, password, resolve, reject) {
+    loginRequest(values, actions, res) {
         return {
             type: types.LOGIN_REQUEST,
-            login, subLogin, password, resolve, reject
+            values, actions, res
         };
     },
 
-    loginSuccess(login, subLogin) {
+    registerRequest(values, actions, res) {
         return {
-            type: types.LOGIN_SUCCESS,
-            login, subLogin
+            type: types.REGISTER_REQUEST,
+            values, actions, res
         };
     },
 

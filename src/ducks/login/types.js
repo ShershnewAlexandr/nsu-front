@@ -1,6 +1,5 @@
 export default {
     LOGIN_REQUEST: '@@login/LOGIN_REQUEST',
-    LOGIN_SUCCESS: '@@login/LOGIN_SUCCESS',
-    LOGIN_ERROR: '@@login/LOGIN_ERROR',
+    REGISTER_REQUEST: '@@login/REGISTER_REQUEST',
     LOGOUT_REQUEST: '@@login/LOGOUT_REQUEST',
 };

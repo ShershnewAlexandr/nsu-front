@@ -21,8 +21,6 @@ const store = createStore(
     composeWithDevTools(applyMiddleware(...middleware)),
 );
 
-window.addEventListener("load", () => {
-    sagaMiddleware.run(rootSaga);
-})
+sagaMiddleware.run(rootSaga);
 
 export default store;

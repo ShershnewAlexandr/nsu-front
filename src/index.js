@@ -5,8 +5,8 @@ import { ConnectedRouter } from 'connected-react-router'
 import App from './components/App';
 import store from './ducks/store';
 import {history} from "./ducks/store";
-import './styles/main.scss';
 import './index.css';
+import 'antd/dist/antd.css';
 
 ReactDOM.render(
     <React.StrictMode>

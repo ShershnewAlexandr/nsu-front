@@ -1,56 +1,42 @@
-import { call, all, takeLatest, put } from 'redux-saga/effects';
+import { call, all, takeLatest, put, delay } from 'redux-saga/effects';
 import types from './types';
-import {push} from 'connected-react-router';
-import loginActions from './actions';
-import {routes} from "../../utils/constants";
-
-async function login(action, _sendsay) {
-    // return _sendsay.login({
-    //     login: action.login,
-    //     sublogin: action.subLogin,
-    //     password: action.password,
-    // });
-}
+import { push } from 'connected-react-router';
+import {createRoute, routes} from "../../utils/constants";
+import { api, apiSetToken} from "../../utils/api";
 
 function* loginSaga(action) {
-    // try {
-    //     yield call(login, action, sendsay);
-    //     const resp = yield sendsay.request({
-    //         action: 'pong',
-    //     })
-    //     yield put(loginActions.loginSuccess(resp.account, resp.sublogin));
-    //     yield put(loginActions.loadHistory());
-    // } catch (err) {
-    //     action.reject({id: err.id, explain: err.explain});
-    //     return;
-    // }
-    // localStorage.setItem("session", sendsay.session);
-    // action.resolve();
-    // yield put(push(routes.CONSOLE));
+    const { values, actions, res } = action;
+    const req = () => api.post('auth/login', values);
+    try {
+        yield delay(1000);
+        const response = yield call(req);
+        apiSetToken(response.data.token);
+        yield put(push(createRoute.EDIT(response.data.userId)))
+    } catch (e) {
+        actions.setErrors({
+            common: "Неверный логин или пароль"
+        });
+    }
+    res();
 }
 
-function* autoLogin() {
-    // const session = localStorage.getItem("session");
-    //
-    // if (session) {
-    //     sendsay.setSession(session);
-    //     try {
-    //         const resp = yield sendsay.request({
-    //             action: 'pong',
-    //         })
-    //         yield put(loginActions.loginSuccess(resp.account, resp.sublogin));
-    //         yield put(loginActions.loadHistory());
-    //         yield put(push(routes.CONSOLE));
-    //     } catch (e) {
-    //         yield call(logoutSaga);
-    //     }
-    // } else {
-    //     yield call(logoutSaga);
-    // }
+function* registerSaga(action) {
+    const { values, actions, res } = action;
+    const req = () => api.post('auth/register', values);
+    try {
+        yield delay(1000);
+        const response = yield call(req);
+        yield put(push(routes.SIGNIN));
+    } catch (e) {
+        actions.setErrors({
+            common: e.response.data.message
+        });
+    }
+    res();
 }
 
 function* logoutSaga(){
-    localStorage.setItem("session", "");
+    localStorage.setItem("token", "");
     yield put(push(routes.SIGNIN));
 }
 
@@ -58,6 +44,7 @@ export default function*() {
     yield all([
         // call(autoLogin),
         takeLatest(types.LOGIN_REQUEST, loginSaga),
+        takeLatest(types.REGISTER_REQUEST, registerSaga),
         takeLatest(types.LOGOUT_REQUEST, logoutSaga)
     ]);
 }
